@@ -1,0 +1,21 @@
+
+
+#ifndef WALLET_WALLET_DEFINITIONS_H
+#define WALLET_WALLET_DEFINITIONS_H
+
+// Ed25519 definitions
+#define WALLET_WALLET_DEFINITIONS_ED25519_PRIVATE_KEY_LENGTH 64 // Private Key Length
+#define WALLET_WALLET_DEFINITIONS_ED25519_PUBLIC_KEY_LENGTH 32 // Public Key Length
+#define WALLET_WALLET_DEFINITIONS_ED25519_SIGNATURE_LENGTH 64 // Signature Length
+
+// Wallet Related
+
+// When not specify path, this is used as path
+#define WALLET_WALLET_DEFINITIONS_DEFAULT_SAVE_PATH "./wallet_data"
+
+// Length of not need data for save() 
+// -> signature variable ( WALLET_WALLET_DEFINITIONS_ED25519_SIGNATURE_LENGTH )
+#define WALLET_WALLET_DEFINITIONS_NOT_NEED_DATA_LENGTH \
+    WALLET_WALLET_DEFINITIONS_ED25519_SIGNATURE_LENGTH
+
+#endif
