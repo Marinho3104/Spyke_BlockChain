@@ -3,7 +3,7 @@ own_path := ./
 
 all_object_files := $(own_path)*.o
 
-output_name := output
+output_name := output.out
 
 blockchain_path := $(own_path)blockchain
 wallet_path := $(own_path)wallet
