@@ -38,7 +38,7 @@ namespace types {
         // Returns the pointer to transaction data
         void* get_transaction_data();
 
-    };
+    } __attribute__((packed));
 
 }
 

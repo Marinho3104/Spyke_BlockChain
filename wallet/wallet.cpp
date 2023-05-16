@@ -185,6 +185,8 @@ wallet::Wallet* wallet::Wallet::by_file( char* __path ) {
         _data_size
     );
 
+    free( _data );
+
     return _wallet;
 
 }
