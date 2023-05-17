@@ -19,7 +19,7 @@ node_test_compilation_flag := FLAG=-DNODE_TEST=
 
 run:
 
-	$(MAKE) node_test
+	$(MAKE) node_settings_generator_test
 
 compile_object_files_g++:
 
@@ -69,6 +69,15 @@ node_test:
 	# Remove files
 	$(MAKE) clean
 
+
+node_settings_generator_test:
+
+	$(MAKE) -C $(node_path) compile_node_settings_generator
+
+	$(MAKE) compile_object_files_g++
+
+	# Remove files
+	$(MAKE) clean
 
 clean:
 
