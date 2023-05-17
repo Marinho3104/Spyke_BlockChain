@@ -32,6 +32,7 @@ headers:
 	$(MAKE) -C $(crypto_path) headers
 	$(MAKE) -C $(utils_path) headers
 	$(MAKE) -C $(types_path) headers
+	$(MAKE) -C $(node_path) headers
 	$(MAKE) -C $(p2p_path) headers
 
 wallet_test:

@@ -13,6 +13,8 @@ void* utils::get_file_data( char* __path, size_t& __data_size ) {
             "rb"
         );
 
+    if ( ! _file ) return 0;
+
     fseek( _file, 0, SEEK_END );
 
     __data_size = ftell( _file );

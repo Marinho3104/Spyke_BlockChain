@@ -37,7 +37,8 @@ namespace p2p {
         // Tries to set a server up with this end point
         bool server();
 
-
+        // Returns the length of end point data and version
+        unsigned char get_end_point_version_length();
 
     };
 

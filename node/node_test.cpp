@@ -3,9 +3,14 @@
 
 #include <iostream>
 
+#include "node.h"
+
 int main() {
 
-    std::cout << "Node Test" << std::endl;
+    node::Node* _node = 
+        node::Node::get_new_node();
+
+    free( _node );    
 
 }
 

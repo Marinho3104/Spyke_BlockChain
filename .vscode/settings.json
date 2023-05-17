@@ -5,6 +5,7 @@
         "atomic": "cpp",
         "bit": "cpp",
         "*.tcc": "cpp",
+        "*.cp": "cpp",
         "cctype": "cpp",
         "charconv": "cpp",
         "chrono": "cpp",
