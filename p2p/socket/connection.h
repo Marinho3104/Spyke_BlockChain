@@ -35,10 +35,13 @@ namespace p2p {
         bool connect();
 
         // Tries to set a server up with this end point
-        bool server();
+        bool server( int );
 
         // Returns the length of end point data and version
         unsigned char get_end_point_version_length();
+
+        // Prints current socket descriptor value and end point information
+        void print();
 
     };
 

@@ -3,6 +3,7 @@ own_path := ./
 
 all_object_files := $(own_path)*.o
 
+node_settings_generator_name := node_settings_generator.out
 output_name := output.out
 
 blockchain_path := $(own_path)blockchain
@@ -17,9 +18,13 @@ node_path := $(own_path)node
 wallet_test_compilation_flag := FLAG=-DWALLET_TEST=
 node_test_compilation_flag := FLAG=-DNODE_TEST=
 
+# P2P tests directory
+p2p_tests_f := $(own_path)node_tests/f
+p2p_tests_s := $(own_path)node_tests/s
+
 run:
 
-	$(MAKE) node_settings_generator_test
+	$(MAKE) node_test
 
 compile_object_files_g++:
 
@@ -69,15 +74,20 @@ node_test:
 	# Remove files
 	$(MAKE) clean
 
+	cp $(own_path)*.out $(p2p_tests_f)
+	mv $(own_path)*.out $(p2p_tests_s)
 
 node_settings_generator_test:
 
 	$(MAKE) -C $(node_path) compile_node_settings_generator
 
-	$(MAKE) compile_object_files_g++
+	g++ -g $(all_object_files) -o $(node_settings_generator_name)
 
 	# Remove files
 	$(MAKE) clean
+
+	cp $(own_path)*.out $(p2p_tests_f)
+	mv $(own_path)*.out $(p2p_tests_s)
 
 clean:
 

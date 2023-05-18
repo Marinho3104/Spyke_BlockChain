@@ -2,3 +2,6 @@
 
 # Ignore output file
 *.out
+
+# Ignore P2P tests directory
+/node_tests

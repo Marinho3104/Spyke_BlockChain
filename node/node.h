@@ -20,7 +20,13 @@ namespace node {
         // Initial connection ( connections made when the node is initialized )
         p2p::Connection* initial_connections; uint16_t initial_connections_count;
 
-        Node_Connections_Information(); Node_Connections_Information( void* );
+        Node_Connections_Information(); Node_Connections_Information( void*, size_t& );
+
+        // Prints all information about params
+        void print();
+
+        // Get bytes occupied in file by this params
+        void get_size();
 
     };
 
@@ -41,6 +47,9 @@ namespace node {
 
         Node_Information(); Node_Information( void* );
 
+        // Prints all information about params
+        void print();
+
     };
 
     /* Represents a node structure with all needed variables and functions */
@@ -52,7 +61,19 @@ namespace node {
         // Node Information
         Node_Information node_information;
 
+        // Temporary Variables
+        bool node_is_running, server_is_up;
+
         Node();
+
+        // Print all information about this Node params
+        void print();
+
+        // Run a user interface
+        void run_interface(); 
+
+        // Run start running the Node
+        void run();
 
 
         /* Static */

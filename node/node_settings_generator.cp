@@ -43,28 +43,41 @@ void get_write_end_point( FILE* _output_file ) {
     );
 
     // Write address
-    // const char* _delimiter = ( _version == 4 ) ? "." : ":";
+    const char* _delimiter = ( _version == 4 ) ? "." : ":";
+    char* _current_token = strtok( _address, _delimiter );
 
-    // char* _token = 
-    //     strtok( _address, _delimiter );
-    // int _token_conversion;
+    // For 4 bytes address IPv4
+    if ( _version == 4 ) {
 
-    // while( _token ) {
+        // Address int form
+        int _address_converted = 0;
 
-    //     _token_conversion = atoi( _token );
+        while( _current_token ) {
 
-    //     fwrite(
-    //         &_token_conversion,
-    //         1, 1, _output_file
-    //     );
+            _address_converted |= atoi( _current_token );
 
-    //     _token = strtok( 0, _delimiter );
+            _current_token = strtok( 0, _delimiter );
 
-    // }
+            if ( _current_token ) _address_converted <<= 8;
 
-    // std::cout << "Version: " << _version << std::endl;
-    // std::cout << "Address: " << _address << std::endl;
-    // std::cout << "Port: " << _port << std::endl;
+        }
+
+        fwrite(
+            &_address_converted,
+            4, 1, _output_file
+        );
+
+    }
+
+    // For 16 bytes address IPv6
+    else { std::cout << "Ipv6 not implemented yet" << std::endl; exit( 1 ); }
+
+    // Write port
+    fwrite(
+        &_port,
+        2, 1,
+        _output_file
+    );
 
 }
 
@@ -76,20 +89,62 @@ void manual_generation() {
 
     if ( ! _output_file ) { std::cout << "Error trying to create the output file" << std::endl; exit( 1 ); }
 
-    std::cout << "\n\tNode Connections Settings\n" << std::endl;
+    std::cout << "\n\t\t-> Node Connections Settings <-" << std::endl;
+
+    std::cout << "\n\t-- Server Connection --\n" << std::endl;
 
     int _have_server_connection_end_point;
 
     std::cout << "Have server connection end point [ 0 / 1 ]: ";
     scanf( "%d", &_have_server_connection_end_point );
 
+    // Write haver server connection
+    fwrite(
+        &_have_server_connection_end_point,
+        1, 1, _output_file
+    );
+
     // If have server connection, get connection end point
-    if ( _have_server_connection_end_point ) {
+    if ( _have_server_connection_end_point ) 
 
         // Get server connection end point
         get_write_end_point( _output_file );
 
+    // Initial Connections
+    std::cout << "\n\t-- Initial Connections --\n" << std::endl;
+
+    unsigned short _initial_connections_count;
+
+    std::cout << "Initial Connections count: "; scanf( "%hu", &_initial_connections_count );
+
+    fwrite(
+        &_initial_connections_count,
+        2, 1, _output_file
+    );
+
+    for ( unsigned short _ = 0; _ < _initial_connections_count; _++ ) {
+        
+        std::cout << "\n\tConnection " << _ + 1 << ":\n" << std::endl; get_write_end_point( _output_file ); 
+
     }
+
+    std::cout << "\n\t\t-> Node Information <-\n" << std::endl;
+
+    unsigned short _max_server_open_connections; 
+    std::cout << "Max server open connections at once: "; scanf( "%hu", &_max_server_open_connections );
+    fwrite( &_max_server_open_connections, 2, 1, _output_file );
+
+    unsigned short _max_ordinary_connections; 
+    std::cout << "Max ordinary connections at once: "; scanf( "%hu", &_max_ordinary_connections );
+    fwrite( &_max_ordinary_connections, 2, 1, _output_file );
+
+    unsigned short _max_stable_connections; 
+    std::cout << "Max stable connections at once: "; scanf( "%hu", &_max_stable_connections );
+    fwrite( &_max_stable_connections, 2, 1, _output_file );
+
+    unsigned long long _memory_pool_size; 
+    std::cout << "Memory pool size ( bytes ) : "; scanf( "%llu", &_memory_pool_size );
+    fwrite( &_memory_pool_size, 8, 1, _output_file );
 
 }
 
