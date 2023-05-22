@@ -11,9 +11,11 @@ int main() {
     blockchain::update_blockchain_variables();
 
     wallet::Wallet* _wallet = 
-        wallet::Wallet::get_new_wallet( 0 );
+        wallet::Wallet::by_file( 0 );
 
     _wallet->run();
+
+    // _wallet->save_key_pair( 0 );
 
     free( _wallet );
 

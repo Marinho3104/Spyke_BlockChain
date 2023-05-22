@@ -24,22 +24,8 @@ compile_object_files: # Compile all files into object files
 	# Remove files
 	$(MAKE) clean
 
-compile_wallet_settings_generator:
-
-	# Modve files into root path
-	cp $(own_path)*.cp $(root_path)
-
-	# Compile into object file
-	g++ -c -g $(root_path)*.cp
-
-	# Move all object files into root path
-	mv $(all_object_files) $(root_path)
-
-	# Remove files
-	$(MAKE) clean
-
 clean:
 
-	rm -f $(root_path)*.cpp $(root_path)*.cp
+	rm -f $(root_path)*.cpp
 
 

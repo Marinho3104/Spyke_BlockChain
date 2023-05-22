@@ -10,8 +10,11 @@
 
 // Wallet Related
 
+// Wallet Connections Information
+#define WALLET_WALLET_DEFINITIONS_WALLET_CONNECTIONS_INFORMATION_COMMUNICATION_CONNECTIONS_COUNT_LENGTH 2
+
 // When not specify path, this is used as path
-#define WALLET_WALLET_DEFINITIONS_DEFAULT_SAVE_PATH "./wallet_data"
+#define WALLET_WALLET_DEFINITIONS_DEFAULT_SETTINGS_PATH "./wallet_settings"
 
 // Length of not need data for save() 
 // -> signature variable ( WALLET_WALLET_DEFINITIONS_ED25519_SIGNATURE_LENGTH )

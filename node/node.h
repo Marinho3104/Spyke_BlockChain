@@ -4,10 +4,11 @@
 #define NODE_NODE_H
 
 #include "connection.h"  // Struct Connection
-
+#include "memory_pool.h" // Struct Memory_Pool
 
 // Compiler libs
 #include <cstdint> // int_32
+#include <semaphore.h> // sem_t
 
 namespace node {
 
@@ -64,9 +65,42 @@ namespace node {
         // Temporary Variables
         bool node_is_running, server_is_up;
 
+        // Ordinary connections info
+        p2p::Connection** ordinary_connections; uint16_t ordinary_connections_count; sem_t ordinary_connections_sem;
+
+        // Stable connections info
+        p2p::Connection** stable_connections; uint16_t stable_connections_count; sem_t stable_connections_sem;
+
+        // Open descriptor files 
+        fd_set open_descriptor_files; sem_t open_descriptor_files_sem;
+
+        // Node memory pool
+        memory_pool::Memory_Pool memory_pool;
+
         Node();
 
-        // Print all information about this Node params
+        // Initialize all temporary variables
+        void initialize_temporary_variable();
+
+        // Adds a new connection into ordinary array
+        bool add_ordinary_connection( p2p::Connection* );
+
+        // Remove a connection into ordinary array
+        bool remove_ordinary_connection( p2p::Connection* );
+
+        // Adds a new connection into stable array
+        bool add_stable_connection( p2p::Connection* );
+
+        // Removes a connection into stable array
+        bool remove_stable_connection( p2p::Connection* );
+
+        // Ads a new file descriptor to open_descriptor_files
+        void add_new_file_descriptor( int );
+
+        // Remove a file desciptor from open_descriptor_files
+        void remove_file_descriptor( int );
+
+        // Print all info about this node params
         void print();
 
         // Run a user interface
@@ -74,6 +108,15 @@ namespace node {
 
         // Run start running the Node
         void run();
+
+        // Monitor all open file descriptors
+        void monitor_open_file_descriptors();
+
+        // Accept a new connection request 
+        void accept_new_connection_request();
+
+        // Handle protocol communication
+        void p2p_communication( p2p::Connection*, unsigned char );
 
 
         /* Static */
