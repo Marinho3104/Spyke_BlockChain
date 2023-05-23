@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <string.h> // memcpy
+#include <unistd.h>
 
 /* Wallet Connections Information */
 
@@ -193,17 +194,25 @@ void wallet::Wallet::creates_and_signs_transaction() {
 
 void wallet::Wallet::send_to_node( p2p::Packet* __packet ) {
 
-    for ( int _ = 0; _ < wallet_connections_information.communication_connections_count; _++ ) {
+    while ( 1 ) {
 
-        if ( ! wallet_connections_information.communication_connections[ _ ].connect() ) continue;
+        // sleep( 2 );
 
-        wallet_connections_information.communication_connections[ _ ].send_packet( __packet );
+        for ( int _ = 0; _ < wallet_connections_information.communication_connections_count; _++ ) {
 
-        wallet_connections_information.communication_connections[ _ ].disconnect();
+            if ( ! wallet_connections_information.communication_connections[ _ ].connect() ) continue;
 
-        break;
+            wallet_connections_information.communication_connections[ _ ].send_packet( __packet );
+
+            wallet_connections_information.communication_connections[ _ ].disconnect();
+
+            break;
+
+        }
 
     }
+
+    std::cout << "out" << std::endl;
 
 } 
 

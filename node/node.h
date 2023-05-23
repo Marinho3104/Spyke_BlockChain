@@ -94,6 +94,9 @@ namespace node {
         // Removes a connection into stable array
         bool remove_stable_connection( p2p::Connection* );
 
+        // Remove a connection 
+        bool remove_connection( p2p::Connection*, unsigned char );
+
         // Ads a new file descriptor to open_descriptor_files
         void add_new_file_descriptor( int );
 

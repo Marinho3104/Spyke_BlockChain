@@ -138,6 +138,11 @@ void node::Node::initialize_temporary_variable() {
     memory_pool = 
         memory_pool::Memory_Pool( node_information.memory_pool_size );
 
+    // Initialize all needed proccesses
+
+    // Transaction  Verification
+    memory_pool.initialize_transaction_verification_proccess();
+
 }
 
 bool node::Node::add_ordinary_connection( p2p::Connection* __connection ) {
@@ -170,7 +175,7 @@ bool node::Node::remove_ordinary_connection( p2p::Connection* __connection ) {
 
     for ( int _ = 0; _ < node_information.max_ordinary_connections; _++ )
 
-        if ( ordinary_connections[ _ ] ) { ordinary_connections[ _ ] = 0; _rtr = 1; ordinary_connections_count--; break;  } 
+        if ( ordinary_connections[ _ ] == __connection ) { ordinary_connections[ _ ] = 0; __connection->disconnect(); remove_file_descriptor( __connection->socket_descriptor ); _rtr = 1; ordinary_connections_count--; break;  } 
 
     sem_post( &ordinary_connections_sem );
 
@@ -208,7 +213,7 @@ bool node::Node::remove_stable_connection( p2p::Connection* __connection ) {
 
     for ( int _ = 0; _ < node_information.max_stable_connections; _++ )
 
-        if ( stable_connections[ _ ] ) { stable_connections[ _ ] = 0; _rtr = 1; stable_connections_count--; break;  } 
+        if ( stable_connections[ _ ] == __connection ) { stable_connections[ _ ] = 0; _rtr = 1; __connection->disconnect(); remove_file_descriptor( __connection->socket_descriptor ); stable_connections_count--; break;  } 
 
     sem_post( &stable_connections_sem );
 
@@ -225,6 +230,19 @@ void node::Node::add_new_file_descriptor( int __file_descriptor ) {
 void node::Node::remove_file_descriptor( int __file_descriptor ) {
 
     sem_wait( &open_descriptor_files_sem ); FD_CLR( __file_descriptor, &open_descriptor_files ); sem_post( &open_descriptor_files_sem );
+
+}
+
+bool node::Node::remove_connection( p2p::Connection* __connection, unsigned char __connection_type ) {
+
+    switch ( __connection_type )
+    {
+    case NODE_NODE_INFORMATION_ORDINARY_CONNECTION: return remove_ordinary_connection( __connection ); break;
+    case NODE_NODE_INFORMATION_STABLE_CONNECTION: return remove_stable_connection( __connection ); break;
+    default: throw "Unknow Connection Type"; break;
+    }
+
+    return 0;
 
 }
 
@@ -378,7 +396,9 @@ void node::Node::p2p_communication( p2p::Connection* __connection, unsigned char
 
     p2p::Packet* _packet_received = __connection->get_packet();
 
-    std::cout << "P2P communication protocol id: " << ( int ) _packet_received->protocol_id << std::endl;
+    if ( ! _packet_received ) { remove_connection( __connection, __connection_type ); return; }
+
+    // std::cout << "P2P communication protocol id: " << ( int ) _packet_received->protocol_id << std::endl;
 
     // Protocol handle by both stable and ordinary connections
     switch ( _packet_received->protocol_id )

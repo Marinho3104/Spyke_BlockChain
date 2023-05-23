@@ -4,6 +4,7 @@ own_path := ./
 
 # Ed25519 
 ed25519_path := $(own_path)ed25519/src/
+
 ed25519_all_compilable_files := $(ed25519_path)*.c
 
 all_object_files := $(own_path)*.o

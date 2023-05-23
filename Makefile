@@ -29,11 +29,15 @@ wallet_tests := $(own_path)wallet_tests/
 
 run:
 
-	$(MAKE) node_test
-
+	$(MAKE) wallet_test || $(MAKE) clean
+ 
 compile_object_files_g++:
 
 	g++ -g $(all_object_files) -o $(output_name)
+
+compile_object_files_nvcc:
+
+	nvcc -rdc=true -arch=sm_70 -Wno-deprecated-gpu-targets -g $(all_object_files) -o $(output_name)
 
 headers:
 
@@ -52,13 +56,14 @@ wallet_test:
 	$(MAKE) headers
 
 	$(MAKE) -C $(wallet_path) $(wallet_test_compilation_flag) compile_object_files 
+	$(MAKE) -C $(memory_pool_path) compile_object_files
 	$(MAKE) -C $(blockchain_path) compile_object_files
 	$(MAKE) -C $(crypto_path) compile_object_files
 	$(MAKE) -C $(utils_path) compile_object_files
 	$(MAKE) -C $(types_path) compile_object_files
 	$(MAKE) -C $(p2p_path) compile_object_files
 
-	$(MAKE) compile_object_files_g++
+	$(MAKE) compile_object_files_nvcc
 
 	# Remove files
 	$(MAKE) clean
@@ -79,7 +84,7 @@ node_test:
 	$(MAKE) -C $(types_path) compile_object_files
 	$(MAKE) -C $(p2p_path) compile_object_files
 
-	$(MAKE) compile_object_files_g++
+	$(MAKE) compile_object_files_nvcc
 
 	# Remove files
 	$(MAKE) clean
@@ -116,4 +121,4 @@ wallet_settings_generator_test:
 
 clean:
 
-	rm -f *.h *.o
+	rm -f *.h *.o *.cu *.cuh *.cpp *.cp *.c

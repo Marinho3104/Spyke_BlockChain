@@ -17,7 +17,11 @@ p2p::Propagation_Protocol::Propagation_Protocol( unsigned char __propagation_typ
 
 void p2p::Propagation_Protocol::handle() {
 
-    
+    switch ( propagation_type )
+    {
+    case P2P_PROTOCOLS_PROPAGATION_PROTOCOL_DEFINITIONS_PROPAGATION_TYPE_TRANSACTION: memory_pool::cuda::handle_transaction( data ); break;
+    default: break;
+    }
 
 }
 
