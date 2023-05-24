@@ -29,7 +29,7 @@ wallet_tests := $(own_path)wallet_tests/
 
 run:
 
-	$(MAKE) wallet_test || $(MAKE) clean
+	$(MAKE) node_test || $(MAKE) clean
  
 compile_object_files_g++:
 

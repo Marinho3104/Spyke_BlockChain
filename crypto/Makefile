@@ -4,6 +4,7 @@ own_path := ./
 
 # Ed25519 
 ed25519_path := $(own_path)ed25519/src/
+gpu_fs_path = $(own_path)gpufs/libgpufs/
 
 ed25519_all_compilable_files := $(ed25519_path)*.c
 

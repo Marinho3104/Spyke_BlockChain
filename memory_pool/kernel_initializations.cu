@@ -34,7 +34,7 @@ extern "C++" {
         // Launch function
         kernel_transaction_verification 
             <<< MEMORY_POOL_KERNEL_TRANSACTION_VERIFICATION_BLOCKS, MEMORY_POOL_KERNEL_TRANSACTION_VERIFICATION_BLOCK_THREADS, 0, transaction_verification_stream >>> 
-                ( transaction_verification_data, transaction_verification_semaphores, transaction_verification_thread_ready, memory_pool, memory_pool_sems, ready_transactions_count, memory_pool_transaction_capacity );
+                ( transaction_verification_data, transaction_verification_semaphores, transaction_verification_thread_ready, memory_pool, memory_pool_sems, memory_pool_data_broudcast_sems, ready_transactions_count, memory_pool_transaction_capacity, public_key_type, public_key_type_enable );
 
         utils::cuda::check_cuda_error();
 

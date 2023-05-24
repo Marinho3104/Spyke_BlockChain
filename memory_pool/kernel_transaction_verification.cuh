@@ -11,7 +11,7 @@
 // Blocks used in kernel call
 #define MEMORY_POOL_KERNEL_TRANSACTION_VERIFICATION_BLOCKS 1
 // Block Threads used in kernel call
-#define MEMORY_POOL_KERNEL_TRANSACTION_VERIFICATION_BLOCK_THREADS 1024
+#define MEMORY_POOL_KERNEL_TRANSACTION_VERIFICATION_BLOCK_THREADS 1
 
 // All threads running transaction verification at same time
 #define MEMORY_POOL_KERNEL_TRANSACTION_VERIFICATION_BLOCKS_TIMES_BLOCK_THREADS \
@@ -38,11 +38,13 @@ namespace memory_pool::cuda {
 
 
     // Kernel transaction verification 
-    __global__ void kernel_transaction_verification( void*, ::cuda::std::binary_semaphore*, ::cuda::std::binary_semaphore*, void*, ::cuda::std::binary_semaphore*, uint64_t*, uint64_t* );
+    __global__ void kernel_transaction_verification( void*, ::cuda::std::binary_semaphore*, ::cuda::std::binary_semaphore*, void*, ::cuda::std::binary_semaphore*, ::cuda::std::binary_semaphore*, uint64_t*, uint64_t*, unsigned char*, bool* );
 
     // Store the transaction data into memory pool
-    __device__ void kernel_store_transaction_data( void*, void*, ::cuda::std::binary_semaphore*, uint64_t*, uint64_t* );
+    __device__ void kernel_store_transaction_data( void*, void*, ::cuda::std::binary_semaphore*, ::cuda::std::binary_semaphore*, uint64_t*, uint64_t* );
 
+    // Checks if a transaction is in the memory pool already
+    __device__ bool kernel_memory_pool_transaction_check( void*, void*, uint64_t* );
 
 }
 

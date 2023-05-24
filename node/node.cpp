@@ -246,6 +246,18 @@ bool node::Node::remove_connection( p2p::Connection* __connection, unsigned char
 
 }
 
+void node::Node::broudcast_data() {
+
+    while ( 1 ) {
+
+        sleep( 5 );
+
+        memory_pool::cuda::transactions_to_broudcast( ordinary_connections, node_information.max_ordinary_connections );
+
+    }
+
+}
+
 void node::Node::print() {
 
     std::cout << "\t\t\t--> Node Information <---\n" << std::endl; 
@@ -320,17 +332,17 @@ void node::Node::run() {
         // Add to ordinary connections array
         add_ordinary_connection( connections_information.initial_connections + _ );
 
-        sleep( 10 );
-
-        std::cout << "Sending" << std::endl;
-
-        ( connections_information.initial_connections + _ )->send_packet( p2p::Disconnect_Protocol::get_packet() );
-
     }
 
 
     // Set node running
     node_is_running = 1;
+
+    // Launch separate thread to broudcast all transaction data
+    std::thread(
+        &node::Node::broudcast_data,
+        this
+    ).detach();
 
     // Launch in a separate thread a thread to monitor file descriptors changes
     std::thread(
@@ -398,12 +410,12 @@ void node::Node::p2p_communication( p2p::Connection* __connection, unsigned char
 
     if ( ! _packet_received ) { remove_connection( __connection, __connection_type ); return; }
 
-    // std::cout << "P2P communication protocol id: " << ( int ) _packet_received->protocol_id << std::endl;
+    std::cout << "P2P communication protocol id: " << ( int ) _packet_received->protocol_id << std::endl;
 
     // Protocol handle by both stable and ordinary connections
     switch ( _packet_received->protocol_id )
     {
-    case P2P_PROTOCOLS_PROTOCOLS_IDS_DISCONNECT_PROTOCOL: __connection->disconnect(); break;
+    case P2P_PROTOCOLS_PROTOCOLS_IDS_DISCONNECT_PROTOCOL: remove_connection( __connection, __connection_type ); break;
     case P2P_PROTOCOLS_PROTOCOLS_IDS_PROPAGATION_PROTOCOL: 
     
         {

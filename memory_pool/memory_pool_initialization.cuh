@@ -19,11 +19,20 @@ namespace memory_pool::cuda {
     // Semaphores for memory pool
     extern ::cuda::std::binary_semaphore* memory_pool_sems;
 
+    // Semaphores for memory pool ( signal if data have been broudcast already )
+    extern ::cuda::std::binary_semaphore* memory_pool_data_broudcast_sems;
+
     // Current ready transactions
     extern uint64_t* ready_transactions_count;
 
     // Memory pool transactions capacity
     extern uint64_t* memory_pool_transaction_capacity;
+
+    // Public key type
+    extern unsigned char *public_key_type;
+
+    // Is public key type enable
+    extern bool *public_key_type_enable;
 
     extern "C++" {
 

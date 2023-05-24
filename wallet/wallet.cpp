@@ -194,23 +194,19 @@ void wallet::Wallet::creates_and_signs_transaction() {
 
 void wallet::Wallet::send_to_node( p2p::Packet* __packet ) {
 
-    while ( 1 ) {
+    for ( int _ = 0; _ < wallet_connections_information.communication_connections_count; _++ ) {
 
-        // sleep( 2 );
+        if ( ! wallet_connections_information.communication_connections[ _ ].connect() ) continue;
 
-        for ( int _ = 0; _ < wallet_connections_information.communication_connections_count; _++ ) {
+        wallet_connections_information.communication_connections[ _ ].send_packet( __packet );
 
-            if ( ! wallet_connections_information.communication_connections[ _ ].connect() ) continue;
+        wallet_connections_information.communication_connections[ _ ].disconnect();
 
-            wallet_connections_information.communication_connections[ _ ].send_packet( __packet );
-
-            wallet_connections_information.communication_connections[ _ ].disconnect();
-
-            break;
-
-        }
+        break;
 
     }
+
+
 
     std::cout << "out" << std::endl;
 

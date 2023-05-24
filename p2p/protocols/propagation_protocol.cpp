@@ -26,7 +26,7 @@ void p2p::Propagation_Protocol::handle() {
 }
 
 uint64_t p2p::Propagation_Protocol::get_representation_length() 
-    { return P2P_PROTOCOLS_PROPAGATION_PROTOCOL_DEFINITIONS_PROPAGATION_TYPE_LENGTH + P2P_PROTOCOLS_PROPAGATION_PROTOCOL_DEFINITIONS_SIZE_LENGTH + size; }
+    { return P2P_PROTOCOLS_PROPAGATION_PROTOCOL_DEFINITIONS_PROPAGATION_TYPE_LENGTH + size; }
 
 void* p2p::Propagation_Protocol::get_representation() {
 

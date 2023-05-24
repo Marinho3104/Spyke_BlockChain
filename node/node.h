@@ -10,6 +10,17 @@
 #include <cstdint> // int_32
 #include <semaphore.h> // sem_t
 
+namespace memory_pool::cuda {
+
+    extern "C++" {
+
+        // Sends all data from all transaction that have not been broudcasted yet
+        void transactions_to_broudcast( p2p::Connection**, uint16_t );
+
+    }
+
+}
+
 namespace node {
 
     /* Holds connections information about Node */
@@ -102,6 +113,9 @@ namespace node {
 
         // Remove a file desciptor from open_descriptor_files
         void remove_file_descriptor( int );
+
+        // Broudcast new data into Stable connections
+        void broudcast_data();
 
         // Print all info about this node params
         void print();
