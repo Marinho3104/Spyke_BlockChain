@@ -5,6 +5,8 @@
 #include "transaction.h" // Struct Transaction
 #include "protocols_ids.h" // Protocols ids
 #include "packet.h" // Struct packet
+#include "block_part.h"
+#include "utils_functions.h"
 
 // Compiler libs
 #include <iostream>
@@ -20,6 +22,20 @@ void p2p::Propagation_Protocol::handle() {
     switch ( propagation_type )
     {
     case P2P_PROTOCOLS_PROPAGATION_PROTOCOL_DEFINITIONS_PROPAGATION_TYPE_TRANSACTION: memory_pool::cuda::handle_transaction( data ); break;
+    case P2P_PROTOCOLS_PROPAGATION_PROTOCOL_DEFINITIONS_PROPAGATION_TYPE_BLOCK_PART: 
+
+        std::cout << "Size -> " << size << std::endl; 
+    
+        utils::write_file_data(
+            data,
+            size,
+            "./block_part_data"
+        );
+
+        // memory_pool::cuda::handle_block_part( data ); 
+        
+        break;
+
     default: break;
     }
 

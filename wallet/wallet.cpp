@@ -137,7 +137,7 @@ void wallet::Wallet_Information::print() {
 
 wallet::Wallet::~Wallet() {}
 
-wallet::Wallet::Wallet() { memset( signature, 0, WALLET_WALLET_DEFINITIONS_ED25519_SIGNATURE_LENGTH ); }
+wallet::Wallet::Wallet() : current_node( 0 ) { memset( signature, 0, WALLET_WALLET_DEFINITIONS_ED25519_SIGNATURE_LENGTH ); }
 
 void wallet::Wallet::sign( void* __data_to_sign, size_t __data_size ) {
 
@@ -177,7 +177,7 @@ void wallet::Wallet::creates_and_signs_transaction() {
 
     transaction_ready.amount = 10;
     transaction_ready.fee = 10;
-    transaction_ready.nonce = 10;
+    transaction_ready.nonce = current_node++;
 
     sign(
         ( void* ) &transaction_ready + WALLET_WALLET_DEFINITIONS_ED25519_SIGNATURE_LENGTH,

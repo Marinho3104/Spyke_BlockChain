@@ -38,13 +38,16 @@ namespace memory_pool::cuda {
 
 
     // Kernel transaction verification 
-    __global__ void kernel_transaction_verification( void*, ::cuda::std::binary_semaphore*, ::cuda::std::binary_semaphore*, void*, ::cuda::std::binary_semaphore*, ::cuda::std::binary_semaphore*, uint64_t*, uint64_t*, unsigned char*, bool* );
+    __global__ void kernel_transaction_verification( void*, ::cuda::std::binary_semaphore*, ::cuda::std::binary_semaphore*, void*, ::cuda::std::binary_semaphore*, ::cuda::std::binary_semaphore*, uint64_t*, uint64_t*, unsigned char*, bool*, unsigned char*, uint32_t* );
 
     // Store the transaction data into memory pool
     __device__ void kernel_store_transaction_data( void*, void*, ::cuda::std::binary_semaphore*, ::cuda::std::binary_semaphore*, uint64_t*, uint64_t* );
 
     // Checks if a transaction is in the memory pool already
     __device__ bool kernel_memory_pool_transaction_check( void*, void*, uint64_t* );
+
+    // Returns public key type
+    __device__ unsigned char kernel_get_public_key_type( void*, unsigned char*, uint32_t* );
 
 }
 

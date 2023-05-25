@@ -21,13 +21,13 @@ namespace types {
         unsigned char from[ WALLET_WALLET_DEFINITIONS_ED25519_PUBLIC_KEY_LENGTH ], to[ WALLET_WALLET_DEFINITIONS_ED25519_PUBLIC_KEY_LENGTH ];
 
         // From amount and fee spent
-        int64_t amount, fee;
+        uint64_t amount, fee;
 
         // Transaction nonce
-        int64_t nonce;
+        uint64_t nonce;
 
         // From and To Balance after transaction accepted
-        int64_t from_balance, to_balance;
+        uint64_t from_balance, to_balance;
 
     // Needs to be packed so it occupies exactly the size intended to be and to more easly convert when it is readed from a file
     } __attribute__((packed));

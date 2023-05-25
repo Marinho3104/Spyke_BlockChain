@@ -21,7 +21,7 @@ namespace memory_pool::cuda {
 
 }
 
-__global__ void memory_pool::cuda::kernel_transaction_verification( void* __data, ::cuda::std::binary_semaphore* __semaphore, ::cuda::std::binary_semaphore* __semaphore_ready, void* __memory_pool, ::cuda::std::binary_semaphore* __memory_pool_sems, ::cuda::std::binary_semaphore* __memory_pool_broudcast_sems,  uint64_t* __ready_transactions, uint64_t* __memory_pool_max_transactions_capacity, unsigned char* __public_key_type, bool* __public_key_type_enable ) {
+__global__ void memory_pool::cuda::kernel_transaction_verification( void* __data, ::cuda::std::binary_semaphore* __semaphore, ::cuda::std::binary_semaphore* __semaphore_ready, void* __memory_pool, ::cuda::std::binary_semaphore* __memory_pool_sems, ::cuda::std::binary_semaphore* __memory_pool_broudcast_sems,  uint64_t* __ready_transactions, uint64_t* __memory_pool_max_transactions_capacity, unsigned char* __public_key_type, bool* __public_key_type_enable, unsigned char* __block_division, uint32_t* __size_span_public_key ) {
 
     int _global_id = 
         blockIdx.x * blockDim.x + threadIdx.x;
@@ -33,6 +33,7 @@ __global__ void memory_pool::cuda::kernel_transaction_verification( void* __data
         __semaphore[ _global_id ].acquire();
 
         printf("Acquired %d\n", _global_id );
+        printf("Public key enable %d\n", *__public_key_type_enable );
 
         // Checks if transaction is already in pool
         if ( ! kernel_memory_pool_transaction_check( __data + _global_id * TRANSACTION_PROPAGATION_LENGTH, __memory_pool, __memory_pool_max_transactions_capacity ) ) {
@@ -43,11 +44,9 @@ __global__ void memory_pool::cuda::kernel_transaction_verification( void* __data
             // If all confirmations succed
 
             // Checks if public key type is enable
-            if ( *__public_key_type_enable ) {
-
-            }
-
-            else kernel_store_transaction_data( __data + _global_id * TRANSACTION_PROPAGATION_LENGTH, __memory_pool, __memory_pool_sems, __memory_pool_broudcast_sems, __ready_transactions, __memory_pool_max_transactions_capacity );
+            if ( ! *__public_key_type_enable || kernel_get_public_key_type( __data + _global_id * TRANSACTION_PROPAGATION_LENGTH + WALLET_WALLET_DEFINITIONS_ED25519_SIGNATURE_LENGTH, __block_division, __size_span_public_key ) == *__public_key_type ) 
+            
+                kernel_store_transaction_data( __data + _global_id * TRANSACTION_PROPAGATION_LENGTH, __memory_pool, __memory_pool_sems, __memory_pool_broudcast_sems, __ready_transactions, __memory_pool_max_transactions_capacity );
 
         }
 
@@ -65,6 +64,8 @@ __device__ void memory_pool::cuda::kernel_store_transaction_data( void* __transa
 
         if ( __memory_pool_sems[ _ ].try_acquire() ) {
 
+            printf("Store in memory pool %d\n", _);
+
             memcpy(
                 __memory_pool + _ * TRANSACTION_PROPAGATION_LENGTH,
                 __transaction_data,
@@ -73,7 +74,7 @@ __device__ void memory_pool::cuda::kernel_store_transaction_data( void* __transa
 
             __memory_pool_broudcast_sems[ _ ].release();
 
-            atomicAdd( ( int* ) __ready_transactions, 1 );
+            atomicAdd( ( unsigned long long* ) __ready_transactions, 1 );
   
             break;
 
@@ -105,6 +106,20 @@ __device__ bool memory_pool::cuda::kernel_memory_pool_transaction_check( void* _
 
 }
 
+__device__ unsigned char memory_pool::cuda::kernel_get_public_key_type( void* __public_key, unsigned char* __block_division, uint32_t* __size_span_public_key ) {
+
+    uint32_t* _pk_value =   
+        ( uint32_t* ) __public_key;
+
+    unsigned char _type = 0;
+
+    for (; _type < *__block_division - 1; _type++ )
+
+        if ( *_pk_value < ( _type + 1 ) * *__size_span_public_key ) break;
+
+    return _type;
+
+}
 
 
 

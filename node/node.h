@@ -91,7 +91,10 @@ namespace node {
         Node();
 
         // Initialize all temporary variables
-        void initialize_temporary_variable();
+        void initialize_temporary_variable( void* );
+
+        // Initialize memory pool
+        void initialize_memory_pool( void* );
 
         // Adds a new connection into ordinary array
         bool add_ordinary_connection( p2p::Connection* );
@@ -143,6 +146,9 @@ namespace node {
 
         // Returns a node with information from given file
         static Node* by_file( char* );
+
+        // Returns a node with information from given file
+        static Node* by_file( char*, void* );
 
     };
 

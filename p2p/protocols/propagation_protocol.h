@@ -8,6 +8,8 @@
 // GPU kernel communication functions
 namespace memory_pool::cuda {
 
+    void handle_block_part( void* );
+
     void handle_transaction( void* );
 
 }

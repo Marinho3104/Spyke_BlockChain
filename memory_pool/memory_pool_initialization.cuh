@@ -34,9 +34,15 @@ namespace memory_pool::cuda {
     // Is public key type enable
     extern bool *public_key_type_enable;
 
+    // Block division
+    extern unsigned char* block_division;
+
+    // Block part span
+    extern uint32_t* size_span_block_division;
+
     extern "C++" {
 
-        void initialize_memory_pool( uint64_t );
+        void initialize_memory_pool( uint64_t, void*, unsigned char, uint32_t );
 
     }
 

@@ -66,6 +66,8 @@ namespace wallet {
 
         types::Transaction transaction_ready;
 
+        uint64_t current_node;
+
         ~Wallet(); Wallet();
 
         // Performs a signature with given data, stores in signature variable

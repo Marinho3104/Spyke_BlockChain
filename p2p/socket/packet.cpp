@@ -47,7 +47,7 @@ p2p::Packet* p2p::Packet::get_packet( unsigned char* __headers, void* __body) {
 
     new ( _packet ) p2p::Packet(
         *__headers,
-        *( uint64_t* ) __headers + 1,
+        *( uint64_t* ) ( __headers + 1 ),
         __body
     );
 

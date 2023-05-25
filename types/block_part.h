@@ -34,9 +34,13 @@ namespace types {
         // Transactions data
         void* transactions_data;
 
-
         // Returns the pointer to transaction data
         void* get_transaction_data();
+
+        /* Static */
+
+        // 
+        static uint64_t get_representation_length( uint32_t );
 
     } __attribute__((packed));
 

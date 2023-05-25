@@ -1,6 +1,7 @@
 
 #include <iostream>
 #include <string.h>
+#include "blockchain_rules.h"
 
 #include "ed25519.h" // Ed25519 
 #include "blockchain_utils.h"
@@ -118,6 +119,9 @@ void manual_generation() {
         );
 
         _pk_type = blockchain::get_public_key_type( _public_key );
+
+        std::cout << ( int ) _pk_type << std::endl;
+        std::cout << ( int ) key_pairs_pk_type << std::endl;
 
     } while( _pk_type != key_pairs_pk_type && key_pair_pk_type_generation );
 
@@ -254,6 +258,8 @@ void check_flags( int __argc, char** __argv ) {
 
 // Start point
 int main( int argc, char** argv ) {
+
+    blockchain::update_blockchain_variables();
 
     // Check flags
     check_flags( argc, argv );

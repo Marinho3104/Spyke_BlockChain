@@ -12,7 +12,9 @@ namespace memory_pool::cuda {
 
         void launch_kernel_transaction_verification();
 
-        void initialize_memory_pool( uint64_t );
+        void launch_kernel_block_part_verification();
+
+        void initialize_memory_pool( uint64_t, void*, unsigned char, uint32_t );
 
     } 
 
@@ -22,9 +24,13 @@ namespace memory_pool {
 
     struct Memory_Pool {
 
-        ~Memory_Pool(); Memory_Pool(); Memory_Pool( uint64_t );
+        void* public_key;
+
+        ~Memory_Pool(); Memory_Pool(); Memory_Pool( uint64_t, void* );
 
         void initialize_transaction_verification_proccess();
+
+        void initialize_block_part_verification_proccess();
 
     };
 

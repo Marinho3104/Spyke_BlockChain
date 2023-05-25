@@ -123,7 +123,7 @@ void node::Node_Information::print() {
 
 node::Node::Node() : node_is_running( 0 ), server_is_up( 0 ), ordinary_connections_count( 0 ), stable_connections_count( 0 ) {}
 
-void node::Node::initialize_temporary_variable() {
+void node::Node::initialize_temporary_variable( void* __public_key ) {
 
     ordinary_connections = ( p2p::Connection** ) malloc( sizeof( p2p::Connection* ) * node_information.max_ordinary_connections ); 
     sem_init( &ordinary_connections_sem, 0, 1 );
@@ -136,12 +136,13 @@ void node::Node::initialize_temporary_variable() {
     sem_init( &open_descriptor_files_sem, 0, 1 ); FD_ZERO( &open_descriptor_files );
 
     memory_pool = 
-        memory_pool::Memory_Pool( node_information.memory_pool_size );
+        memory_pool::Memory_Pool( node_information.memory_pool_size, __public_key );
 
     // Initialize all needed proccesses
 
     // Transaction  Verification
     memory_pool.initialize_transaction_verification_proccess();
+    memory_pool.initialize_block_part_verification_proccess();
 
 }
 
@@ -250,7 +251,7 @@ void node::Node::broudcast_data() {
 
     while ( 1 ) {
 
-        sleep( 5 );
+        sleep( 2 );
 
         memory_pool::cuda::transactions_to_broudcast( ordinary_connections, node_information.max_ordinary_connections );
 
@@ -411,6 +412,7 @@ void node::Node::p2p_communication( p2p::Connection* __connection, unsigned char
     if ( ! _packet_received ) { remove_connection( __connection, __connection_type ); return; }
 
     std::cout << "P2P communication protocol id: " << ( int ) _packet_received->protocol_id << std::endl;
+    std::cout << "Packet size -> " << _packet_received->size << std::endl;
 
     // Protocol handle by both stable and ordinary connections
     switch ( _packet_received->protocol_id )
@@ -484,7 +486,42 @@ node::Node* node::Node::by_file( char* __path ) {
     _node->node_information = 
         node::Node_Information( _data + _length ); 
 
-    _node->initialize_temporary_variable();
+    _node->initialize_temporary_variable( 0 );
+
+    // free( _data );
+
+    return _node;
+
+}
+
+node::Node* node::Node::by_file( char* __path, void* __public_key ) {
+
+    size_t _data_length = 0;
+
+    void* _data = 
+        utils::get_file_data(
+            __path ? __path : ( char* ) NODE_NODE_DEFINITIONS_DEFAULT_SAVE_PATH,
+            _data_length
+        );
+
+    size_t _length;
+
+    node::Node* _node = 
+        ( node::Node* ) malloc( sizeof( node::Node ) );
+
+
+    *_node =
+        node::Node();
+
+    // Set node connections info
+    _node->connections_information =
+        node::Node_Connections_Information( _data, _length );
+
+    // Set node info
+    _node->node_information = 
+        node::Node_Information( _data + _length ); 
+
+    _node->initialize_temporary_variable( __public_key );
 
     // free( _data );
 

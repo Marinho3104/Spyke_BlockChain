@@ -8,3 +8,6 @@
 
 # Ignore Wallet tests directory
 /wallet_tests
+
+# Ignore Miner tests directory
+/miner_tests
