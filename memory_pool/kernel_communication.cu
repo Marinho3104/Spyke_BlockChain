@@ -1,6 +1,8 @@
 
 
 #include "kernel_transaction_verification.cuh" // Transaction verification variables
+#include "utils_functions_cuda.cuh"
+#include "kernel_block_part_verification.cuh"
 #include "kernel_communication.cuh" // Kernel communication functions
 #include "transaction_definitions.h" // Transaction definitions
 #include "memory_pool_initialization.cuh"
@@ -16,23 +18,34 @@
 #include <iostream>
 #include <stdio.h>
 
-void memory_pool::cuda::handle_block_part( void* __block_part_data ) {
+void memory_pool::cuda::handle_block_part( void* __block_part_data, uint64_t __block_part_data_size ) {
 
     printf("Block part received in CPU cuda\n");
 
-    types::Block_Part* _block_part = 
-        ( types::Block_Part* ) __block_part_data;
+    for (
+        int _ = 0;
+        _ < MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_BLOCKS_TIMES_BLOCK_THREADS;
+        _++
+    ) {
 
-    void* _data = 
-        _block_part->get_transaction_data() + WALLET_WALLET_DEFINITIONS_ED25519_SIGNATURE_LENGTH + WALLET_WALLET_DEFINITIONS_ED25519_PUBLIC_KEY_LENGTH + WALLET_WALLET_DEFINITIONS_ED25519_PUBLIC_KEY_LENGTH;
+        // Thread was available
+        if ( block_part_verification_thread_ready[ _ ].try_acquire() ) {
 
-    std::cout << "Transaction count: " << _block_part->transactions_count  << std::endl; 
+            cudaMallocManaged( block_part_verification_data + _, __block_part_data_size ); utils::cuda::check_cuda_error();
+    
+            memcpy(
+                block_part_verification_data[ _ ],
+                __block_part_data,
+                __block_part_data_size
+            );
 
-    if ( ! _block_part->transactions_count ) return;
+            block_part_verification_semaphores[ _ ].release();
 
-    std::cout << "Transaction amount: " << *( uint64_t* ) _data  << std::endl; 
-    std::cout << "Transaction fee: " << *( uint64_t* ) ( _data + 8 )  << std::endl; 
-    std::cout << "Transaction nonce: " << *( uint64_t* ) ( _data + 8 + 8 ) << std::endl; 
+            printf("Found\n");
+
+        }
+    
+    }
 
 }
 
@@ -109,6 +122,9 @@ void* memory_pool::cuda::get_transaction_data_from_memory_pool( uint32_t* __tran
     void* _data = 
         malloc( _ready_transactions * (TRANSACTION_LENGTH) ), *_rtr = _data;
 
+    std::cout << "Malloc pointer: " << _data << std::endl;
+    std::cout << "Ready transactions: " << *ready_transactions_count << std::endl;
+
     for ( uint64_t _ = 0; _ready_transactions && _ < *memory_pool_transaction_capacity; _++ )
 
         // Have data
@@ -128,9 +144,11 @@ void* memory_pool::cuda::get_transaction_data_from_memory_pool( uint32_t* __tran
             
             _data = _data + TRANSACTION_LENGTH;
 
-            memory_pool_sems[ _ ].release();
+            // memory_pool_sems[ _ ].release();
 
-            (*ready_transactions_count)--; _ready_transactions--;
+            // (*ready_transactions_count)--; 
+            
+            _ready_transactions--;
 
         }
 

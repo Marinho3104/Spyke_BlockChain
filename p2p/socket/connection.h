@@ -6,6 +6,7 @@
 
 // Compiler libs
 
+#include <semaphore.h> // sem_t
 #include <cstddef> // size_t
 
 namespace p2p {
@@ -33,6 +34,9 @@ namespace p2p {
 
         // Connection Data
         void* data; size_t data_size;
+
+        // Semaphore for send calls been execute sync
+        sem_t send_sem;
 
 
         Connection(); Connection( unsigned char, void* ); Connection( unsigned char, void*, int, void*, unsigned char );

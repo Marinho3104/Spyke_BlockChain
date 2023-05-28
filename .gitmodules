@@ -1,3 +1,6 @@
 [submodule "crypto/ed25519"]
 	path = crypto/ed25519
 	url = https://github.com/orlp/ed25519.git
+[submodule "crypto/shas"]
+	path = crypto/shas
+	url = https://github.com/pr0f3ss/SHA.git

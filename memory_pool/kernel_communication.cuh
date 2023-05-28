@@ -16,7 +16,7 @@ namespace memory_pool::cuda {
     extern "C++" {
 
         // Sends a block part data to a thread block to be handle and it is all correct store the block part in blockchain data
-        void handle_block_part( void* );
+        void handle_block_part( void*, uint64_t );
 
         // Sends a transaction data to a thread block to be handle and it is all correct stores it in memory pool
         // If space is available

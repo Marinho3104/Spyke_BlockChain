@@ -292,7 +292,7 @@ void node::Node::run_interface() {
 
     while( 1 ) {
 
-        system( "clear" );
+        // system( "clear" );
 
         print();
 
@@ -409,10 +409,10 @@ void node::Node::p2p_communication( p2p::Connection* __connection, unsigned char
 
     p2p::Packet* _packet_received = __connection->get_packet();
 
-    if ( ! _packet_received ) { remove_connection( __connection, __connection_type ); return; }
+    if ( ! _packet_received ) { std::cout << "Packet error" << std::endl; remove_connection( __connection, __connection_type ); return; }
 
-    std::cout << "P2P communication protocol id: " << ( int ) _packet_received->protocol_id << std::endl;
-    std::cout << "Packet size -> " << _packet_received->size << std::endl;
+    // std::cout << "P2P communication protocol id: " << ( int ) _packet_received->protocol_id << std::endl;
+    // std::cout << "Packet size -> " << _packet_received->size << std::endl;
 
     // Protocol handle by both stable and ordinary connections
     switch ( _packet_received->protocol_id )
@@ -427,12 +427,16 @@ void node::Node::p2p_communication( p2p::Connection* __connection, unsigned char
 
             _propagation_protocol->handle();
 
+            _propagation_protocol->~Propagation_Protocol(); free( _propagation_protocol );
+
             break;
         
         }
 
     default: break;
     }
+
+    _packet_received->~Packet(); free( _packet_received );
 
 }
 

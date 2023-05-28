@@ -32,13 +32,17 @@ __global__ void memory_pool::cuda::kernel_transaction_verification( void* __data
 
         __semaphore[ _global_id ].acquire();
 
-        printf("Acquired %d\n", _global_id );
-        printf("Public key enable %d\n", *__public_key_type_enable );
+        // printf("Acquired %d\n", _global_id );
+        // printf("Public key enable %d\n", *__public_key_type_enable );
 
         // Checks if transaction is already in pool
         if ( ! kernel_memory_pool_transaction_check( __data + _global_id * TRANSACTION_PROPAGATION_LENGTH, __memory_pool, __memory_pool_max_transactions_capacity ) ) {
 
             // Make all needed confirmations TODO
+
+            // printf("Passed verification\n");
+
+            // printf("Transactions in pool %d\n", *__ready_transactions );
 
 
             // If all confirmations succed
@@ -48,7 +52,7 @@ __global__ void memory_pool::cuda::kernel_transaction_verification( void* __data
             
                 kernel_store_transaction_data( __data + _global_id * TRANSACTION_PROPAGATION_LENGTH, __memory_pool, __memory_pool_sems, __memory_pool_broudcast_sems, __ready_transactions, __memory_pool_max_transactions_capacity );
 
-        }
+        } // else printf( "Already in memory pool" );
 
         __semaphore_ready[ _global_id ].release();
 
@@ -64,7 +68,7 @@ __device__ void memory_pool::cuda::kernel_store_transaction_data( void* __transa
 
         if ( __memory_pool_sems[ _ ].try_acquire() ) {
 
-            printf("Store in memory pool %d\n", _);
+            // printf("Store in memory pool %d\n", _);
 
             memcpy(
                 __memory_pool + _ * TRANSACTION_PROPAGATION_LENGTH,

@@ -1,9 +1,11 @@
 
 #include "propagation_protocol_definitions.h"
 #include "propagation_protocol.h"
+#include "utils_functions.h"
 
 #include "transaction_definitions.h"
 #include "consensus.h"
+#include "SHA512.h"
 #include "packet.h"
 #include "wallet.h"
 #include "miner.h"
@@ -15,7 +17,7 @@
 
 namespace consensus {
 
-    unsigned char current_block_hash[ CONSENSUS_CONSENSUS_CURRENT_BLOCK_HASH_LENGHT ] = { 0 };
+    unsigned char current_block_hash[ CONSENSUS_CONSENSUS_CURRENT_BLOCK_HASH_LENGHT + 1 ] = { 0 };
 
 }
 
@@ -48,6 +50,20 @@ void* consensus::get_block_part( wallet::Wallet* __miner_wallet, uint32_t* __tra
 
     memcpy(
         _block_part_data,
+        current_block_hash,
+        CONSENSUS_CONSENSUS_CURRENT_BLOCK_HASH_LENGHT
+    );
+
+    SHA512 sha512;
+
+    memcpy(
+        current_block_hash,
+        sha512.hash( ( unsigned char* ) utils::convert_bytes_hex(current_block_hash, 64) ),
+        CONSENSUS_CONSENSUS_CURRENT_BLOCK_HASH_LENGHT
+    );
+
+    memcpy(
+        _block_part_data + CONSENSUS_CONSENSUS_CURRENT_BLOCK_HASH_LENGHT,
         current_block_hash,
         CONSENSUS_CONSENSUS_CURRENT_BLOCK_HASH_LENGHT
     );
@@ -98,14 +114,20 @@ void consensus::miner_selected( miner::Miner* __miner ) {
     p2p::Packet* _packet =  
         _propagation_protocol->get_packet();
 
-    for ( int _ = 0; _ < __miner->node->node_information.max_ordinary_connections; _++ ) 
+    // for ( int _ = 0; _ < __miner->node->node_information.max_ordinary_connections; _++ ) 
 
-        if ( __miner->node->ordinary_connections[ _ ] ) __miner->node->ordinary_connections[ _ ]->send_packet( _packet );
+    //     if ( __miner->node->ordinary_connections[ _ ] ) __miner->node->ordinary_connections[ _ ]->send_packet( _packet );
+
+    if ( __miner->node->ordinary_connections[ 0 ] ) __miner->node->ordinary_connections[ 0 ]->send_packet( _packet );
 
 
 }
 
 void consensus::consensus_main_process( miner::Miner* __miner ) {
+
+    sleep( 10 );
+
+    std::cout << "starting " << std::endl;
 
     while ( 1 ) {
 
@@ -113,7 +135,7 @@ void consensus::consensus_main_process( miner::Miner* __miner ) {
 
         else std::cout << "Not my turn" << std::endl;
 
-        sleep( 3 );
+        sleep( 5 );
 
     }
 

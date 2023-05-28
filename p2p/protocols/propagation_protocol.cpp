@@ -22,19 +22,7 @@ void p2p::Propagation_Protocol::handle() {
     switch ( propagation_type )
     {
     case P2P_PROTOCOLS_PROPAGATION_PROTOCOL_DEFINITIONS_PROPAGATION_TYPE_TRANSACTION: memory_pool::cuda::handle_transaction( data ); break;
-    case P2P_PROTOCOLS_PROPAGATION_PROTOCOL_DEFINITIONS_PROPAGATION_TYPE_BLOCK_PART: 
-
-        std::cout << "Size -> " << size << std::endl; 
-    
-        utils::write_file_data(
-            data,
-            size,
-            "./block_part_data"
-        );
-
-        // memory_pool::cuda::handle_block_part( data ); 
-        
-        break;
+    case P2P_PROTOCOLS_PROPAGATION_PROTOCOL_DEFINITIONS_PROPAGATION_TYPE_BLOCK_PART: memory_pool::cuda::handle_block_part( data, size ); break;
 
     default: break;
     }
@@ -96,3 +84,40 @@ p2p::Propagation_Protocol* p2p::Propagation_Protocol::get_propagation_protocol( 
 
 } 
 
+
+
+/*
+
+
+{
+
+            char _path[ 136 ];
+
+            memcpy(
+                _path,
+                "./data/",
+                7
+            );
+
+            memcpy(
+                _path + 7,
+                utils::convert_bytes_hex( data, 64 ),
+                128
+            );
+
+            _path[ 135 ] = '\0';
+
+            // std::cout << "Path -> " << _path << std::endl; 
+        
+            utils::write_file_data(
+                data,
+                size,
+                _path
+            );
+            
+            // memory_pool::cuda::handle_block_part( data ); 
+            
+            break;
+
+        }
+        */

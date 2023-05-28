@@ -221,28 +221,45 @@ p2p::Packet* p2p::get_packet_from( p2p::Connection* __connection ) {
 
     if ( _sts != P2P_SOCKET_PACKET_DEFINITIONS_PROTOCOL_ID_LENGTH + P2P_SOCKET_PACKET_DEFINITIONS_SIZE_LENGTH ) return 0;
 
-    long long _data_size =
+    unsigned long long _data_size =
         *( ( unsigned long long* ) ( _header + 1 ) );
 
-    if ( ! _data_size )
+    if ( ! _data_size ) {
+
+        std::cout << "Nor here" << std::endl;
 
         return 
             p2p::Packet::get_packet(
                 _header, 0
             );
 
+    }
+
     void* _body = malloc( _data_size );
+    unsigned long long _current_bytes_recv = 0;
 
-    _sts = 
-        recv(
-            __connection->socket_descriptor,
-            _body,
-            _data_size,
-            0
-        );
+    while( _data_size > 0 ) {
 
-    if ( _sts != _data_size ) { free( _body ); return 0; }
-    
+        _sts = 
+            recv(
+                __connection->socket_descriptor,
+                _body + _current_bytes_recv,
+                _data_size,
+                0
+            );
+
+        if ( _sts == -1 ) { 
+            
+            std::cout << "here" << std::endl;
+            
+            free( _body ); return 0; 
+            
+        }
+
+        _data_size -= _sts; _current_bytes_recv += _sts;
+        
+    }
+
     return 
         p2p::Packet::get_packet(
             _header, _body

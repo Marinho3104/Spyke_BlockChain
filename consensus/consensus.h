@@ -32,7 +32,7 @@ namespace memory_pool::cuda {
 
 namespace consensus {
 
-    extern unsigned char current_block_hash[ CONSENSUS_CONSENSUS_CURRENT_BLOCK_HASH_LENGHT ];
+    extern unsigned char current_block_hash[ CONSENSUS_CONSENSUS_CURRENT_BLOCK_HASH_LENGHT + 1 ];
 
     // Returns 1 if is miner turn to mine a block
     bool is_miners_turn( void* );

@@ -5,6 +5,7 @@
 #include "connection.h" // Struct Connection
 #include "wallet.h" // Struct Wallet
 #include "ed25519.h" // Ed25519 
+#include "packet.h"
 
 #include "propagation_protocol_definitions.h" // Propagation Protocol definitions
 #include "propagation_protocol.h" // Struct Propagation Protocol
@@ -194,19 +195,42 @@ void wallet::Wallet::creates_and_signs_transaction() {
 
 void wallet::Wallet::send_to_node( p2p::Packet* __packet ) {
 
-    for ( int _ = 0; _ < wallet_connections_information.communication_connections_count; _++ ) {
+        for ( int _ = 0; _ < wallet_connections_information.communication_connections_count; _++ ) {
 
-        if ( ! wallet_connections_information.communication_connections[ _ ].connect() ) continue;
+            if ( ! wallet_connections_information.communication_connections[ _ ].connect() ) continue;
 
-        wallet_connections_information.communication_connections[ _ ].send_packet( __packet );
+            while( 1 ) {
 
-        wallet_connections_information.communication_connections[ _ ].disconnect();
+                sleep( 1 );
 
-        break;
+                for ( int __ = 0; __ < 1024; __++ ) {
+            
+                p2p::Propagation_Protocol* _propagation_protocol = 
+                    ( p2p::Propagation_Protocol* ) malloc( sizeof( p2p::Propagation_Protocol ) );
 
-    }
+                new ( _propagation_protocol ) p2p::Propagation_Protocol(
+                    P2P_PROTOCOLS_PROPAGATION_PROTOCOL_DEFINITIONS_PROPAGATION_TYPE_TRANSACTION,
+                    TRANSACTION_PROPAGATION_LENGTH,
+                    &transaction_ready
+                );
 
+                __packet = _propagation_protocol->get_packet();
+                
+                creates_and_signs_transaction();
 
+                wallet_connections_information.communication_connections[ _ ].send_packet( __packet );
+
+                _propagation_protocol->~Propagation_Protocol(); free( _propagation_protocol ); __packet->~Packet();
+
+                }
+
+            }
+
+            wallet_connections_information.communication_connections[ _ ].disconnect();
+
+            break;
+
+        }
 
     std::cout << "out" << std::endl;
 
