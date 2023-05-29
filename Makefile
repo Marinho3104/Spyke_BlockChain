@@ -36,7 +36,7 @@ miner_tests_s := $(own_path)miner_tests/s
 
 run:
 
-	$(MAKE) node_test || $(MAKE) clean
+	$(MAKE) miner_test || $(MAKE) clean
  
 compile_object_files_g++:
 

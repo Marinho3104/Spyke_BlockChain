@@ -25,6 +25,11 @@
 #define MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_ALL_THREADS_SEMAPHORES_SIZE \ 
     MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_BLOCKS_TIMES_BLOCK_THREADS * sizeof( ::cuda::std::binary_semaphore )
 
+// Path to block part store directoryu
+#define MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_STORE_DIRECTORY "./data/"
+
+// Number of block parts store in memory waiting to be stored in file memory
+#define MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_BLOCK_PART_STORE_FOR_FILE_MEMORY 10
 
 namespace p2p {
 
@@ -43,7 +48,10 @@ namespace memory_pool::cuda {
     extern ::cuda::std::binary_semaphore* block_part_verification_thread_ready;
 
     // Kernel to verify a block part
-    __global__ void kernel_block_part_verification( void**, ::cuda::std::binary_semaphore* );
+    __global__ void kernel_block_part_verification( void**, ::cuda::std::binary_semaphore*, ::cuda::std::binary_semaphore*, void**, ::cuda::std::binary_semaphore*, ::cuda::std::binary_semaphore* );
+
+    // Store block part data into memory pool
+    __device__ void kernel_block_part_store_block_part( void*, void**, ::cuda::std::binary_semaphore*, ::cuda::std::binary_semaphore* );
 
 }
 

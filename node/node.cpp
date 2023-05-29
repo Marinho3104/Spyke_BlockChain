@@ -141,8 +141,8 @@ void node::Node::initialize_temporary_variable( void* __public_key ) {
     // Initialize all needed proccesses
 
     // Transaction  Verification
-    memory_pool.initialize_transaction_verification_proccess();
     memory_pool.initialize_block_part_verification_proccess();
+    memory_pool.initialize_transaction_verification_proccess();
 
 }
 
@@ -254,6 +254,7 @@ void node::Node::broudcast_data() {
         sleep( 2 );
 
         memory_pool::cuda::transactions_to_broudcast( ordinary_connections, node_information.max_ordinary_connections );
+        memory_pool::cuda::store_broudcast_block_part_data( ordinary_connections, node_information.max_ordinary_connections );
 
     }
 
@@ -292,7 +293,7 @@ void node::Node::run_interface() {
 
     while( 1 ) {
 
-        // system( "clear" );
+        system( "clear" );
 
         print();
 
@@ -411,8 +412,8 @@ void node::Node::p2p_communication( p2p::Connection* __connection, unsigned char
 
     if ( ! _packet_received ) { std::cout << "Packet error" << std::endl; remove_connection( __connection, __connection_type ); return; }
 
-    // std::cout << "P2P communication protocol id: " << ( int ) _packet_received->protocol_id << std::endl;
-    // std::cout << "Packet size -> " << _packet_received->size << std::endl;
+    std::cout << "P2P communication protocol id: " << ( int ) _packet_received->protocol_id << std::endl;
+    std::cout << "Packet size -> " << _packet_received->size << std::endl;
 
     // Protocol handle by both stable and ordinary connections
     switch ( _packet_received->protocol_id )

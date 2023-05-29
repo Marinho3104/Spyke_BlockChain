@@ -17,6 +17,8 @@ namespace memory_pool::cuda {
         // Sends all data from all transaction that have not been broudcasted yet
         void transactions_to_broudcast( p2p::Connection**, uint16_t );
 
+        void store_broudcast_block_part_data( p2p::Connection**, uint16_t );
+
     }
 
 }

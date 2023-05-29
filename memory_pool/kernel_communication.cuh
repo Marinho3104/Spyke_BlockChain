@@ -28,6 +28,9 @@ namespace memory_pool::cuda {
         // Gets all transaction data in memory pool
         void* get_transaction_data_from_memory_pool( uint32_t* );
 
+        // Store every block part data in file and broudcast data
+        void store_broudcast_block_part_data( p2p::Connection**, uint16_t );
+
     }
 
 }

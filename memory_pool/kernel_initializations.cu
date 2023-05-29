@@ -49,7 +49,7 @@ extern "C++" {
         cudaMallocManaged( &block_part_verification_semaphores, MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_ALL_THREADS_SEMAPHORES_SIZE ); utils::cuda::check_cuda_error();
         cudaMallocManaged( &block_part_verification_thread_ready, MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_ALL_THREADS_SEMAPHORES_SIZE ); utils::cuda::check_cuda_error();
 
-        for ( int _ = 0; _ < MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_ALL_THREADS_SEMAPHORES_SIZE; _++ ) {
+        for ( int _ = 0; _ < MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_BLOCKS_TIMES_BLOCK_THREADS; _++ ) {
 
             new ( block_part_verification_semaphores + _ ) ::cuda::std::binary_semaphore( 0 );
             new ( block_part_verification_thread_ready + _ ) ::cuda::std::binary_semaphore( 1 );
@@ -58,11 +58,11 @@ extern "C++" {
 
         cudaMallocManaged( &block_part_verification_data, MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_DATA ); utils::cuda::check_cuda_error();
 
-        for ( int _ = 0; _ < MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_DATA; _++ ) block_part_verification_data[ _ ] = 0;
+        for ( int _ = 0; _ < MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_BLOCKS_TIMES_BLOCK_THREADS; _++ ) block_part_verification_data[ _ ] = 0;
 
         kernel_block_part_verification
             <<< MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_BLOCKS, MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_BLOCK_THREADS, 0, block_part_stream >>>
-                ( block_part_verification_data, block_part_verification_semaphores );
+                ( block_part_verification_data, block_part_verification_semaphores, block_part_verification_thread_ready, block_part_memory_pool, block_part_memory_pool_semaphores, block_part_memory_pool_broudcast_semaphores );
 
         utils::cuda::check_cuda_error();
 

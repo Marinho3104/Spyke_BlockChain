@@ -40,6 +40,14 @@ namespace memory_pool::cuda {
     // Block part span
     extern uint32_t* size_span_block_division;
 
+
+    /* Block Part */
+
+    extern void** block_part_memory_pool;
+
+    extern ::cuda::std::binary_semaphore* block_part_memory_pool_semaphores;
+    extern ::cuda::std::binary_semaphore* block_part_memory_pool_broudcast_semaphores;
+
     extern "C++" {
 
         void initialize_memory_pool( uint64_t, void*, unsigned char, uint32_t );

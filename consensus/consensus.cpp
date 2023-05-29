@@ -101,6 +101,35 @@ void consensus::miner_selected( miner::Miner* __miner ) {
     void* _block_part_generated_data = 
         get_block_part( __miner->wallet, &_transactions_count );
 
+    // Save in file
+    char* _file_path = 
+        ( char* ) malloc( sizeof( MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_STORE_DIRECTORY ) + 129 );
+
+    void* _hash_hex;
+
+    memcpy(
+        _file_path,
+        MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_STORE_DIRECTORY,
+        sizeof( MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_STORE_DIRECTORY ) - 1
+    );
+
+    _file_path[ sizeof( MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_STORE_DIRECTORY ) + 128 ] = 0; 
+
+    _hash_hex = 
+        utils::convert_bytes_hex( _block_part_generated_data, 64 );
+
+    memcpy(
+        _file_path + sizeof( MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_STORE_DIRECTORY ) - 1,
+        _hash_hex,
+        128
+    ); free( _hash_hex );
+
+    utils::write_file_data(
+        _block_part_generated_data,
+        types::Block_Part::get_representation_length( _transactions_count ),
+        _file_path
+    ); free( _file_path );
+
     p2p::Propagation_Protocol* _propagation_protocol = 
         ( p2p::Propagation_Protocol* ) malloc( sizeof( p2p::Propagation_Protocol ) );
 
@@ -135,7 +164,7 @@ void consensus::consensus_main_process( miner::Miner* __miner ) {
 
         else std::cout << "Not my turn" << std::endl;
 
-        sleep( 5 );
+        // sleep( 5 );
 
     }
 

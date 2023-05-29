@@ -2,6 +2,12 @@
 
 /* Responsible for keep the miner blocks updated and when is miner turn to mine a new block mine it as well */
 
+#ifndef CONSENSUS_CONSENSUS_H
+#define CONSENSUS_CONSENSUS_H
+
+// Path to block part store directoryu
+#define MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_STORE_DIRECTORY "./data/"
+
 #include "consensus_definitions.h"
 #include "block_part.h"
 
@@ -49,3 +55,6 @@ namespace consensus {
 
 
 }
+
+
+#endif
