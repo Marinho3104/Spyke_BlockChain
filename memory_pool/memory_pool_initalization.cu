@@ -33,6 +33,8 @@ namespace memory_pool::cuda {
     ::cuda::std::binary_semaphore* block_part_memory_pool_broudcast_semaphores;
     ::cuda::std::binary_semaphore* block_part_memory_pool_semaphores;
 
+    void* current_block_part_hash;
+
 }
 
 void memory_pool::cuda::initialize_memory_pool( uint64_t __memory_pool_size, void* __public_key, unsigned char __block_division, uint32_t __size_span_block_division ) {
@@ -76,7 +78,18 @@ void memory_pool::cuda::initialize_memory_pool( uint64_t __memory_pool_size, voi
 
         { new ( block_part_memory_pool_semaphores + _ ) ::cuda::std::binary_semaphore( 1 ); new ( block_part_memory_pool_broudcast_semaphores + _ ) ::cuda::std::binary_semaphore( 0 ); }
 
-        
+    cudaMallocManaged( &current_block_part_hash, 64 ); utils::cuda::check_cuda_error();
 
 }
+
+void memory_pool::cuda::update_current_hash( void* __new_hash ) {
+
+    memcpy(
+        current_block_part_hash,
+        __new_hash,
+        64
+    );
+
+}
+
 

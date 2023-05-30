@@ -11,3 +11,6 @@
 
 # Ignore Miner tests directory
 /miner_tests
+
+# Ignore pre made block parts directory for tests
+/block_parts_test

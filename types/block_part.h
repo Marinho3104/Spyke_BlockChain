@@ -37,6 +37,9 @@ namespace types {
         // Returns the pointer to transaction data
         void* get_transaction_data();
 
+        // Returns the newest transaction with given public key
+        void* get_transaction_data( void* );
+
         /* Static */
 
         // 

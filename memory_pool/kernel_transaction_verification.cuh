@@ -32,13 +32,19 @@ namespace memory_pool::cuda {
 
     extern void* transaction_verification_data;
 
+    extern void* transaction_verification_previous_data;
+
+    extern ::cuda::std::binary_semaphore* transaction_verification_previous_data_semphores;
+
     extern ::cuda::std::binary_semaphore* transaction_verification_semaphores;
 
     extern ::cuda::std::binary_semaphore* transaction_verification_thread_ready;
 
+    // Checks previous block parts to get the previous data of current data
+    void set_previous_data();
 
     // Kernel transaction verification 
-    __global__ void kernel_transaction_verification( void*, ::cuda::std::binary_semaphore*, ::cuda::std::binary_semaphore*, void*, ::cuda::std::binary_semaphore*, ::cuda::std::binary_semaphore*, uint64_t*, uint64_t*, unsigned char*, bool*, unsigned char*, uint32_t* );
+    __global__ void kernel_transaction_verification( void*, ::cuda::std::binary_semaphore*, ::cuda::std::binary_semaphore*, void*, ::cuda::std::binary_semaphore*,  void*, ::cuda::std::binary_semaphore*, ::cuda::std::binary_semaphore*, uint64_t*, uint64_t*, unsigned char*, bool*, unsigned char*, uint32_t* );
 
     // Store the transaction data into memory pool
     __device__ void kernel_store_transaction_data( void*, void*, ::cuda::std::binary_semaphore*, ::cuda::std::binary_semaphore*, uint64_t*, uint64_t* );

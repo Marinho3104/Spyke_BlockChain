@@ -172,9 +172,9 @@ void* memory_pool::cuda::get_transaction_data_from_memory_pool( uint32_t* __tran
             
             _data = _data + TRANSACTION_LENGTH;
 
-            // memory_pool_sems[ _ ].release();
+            memory_pool_sems[ _ ].release();
 
-            // (*ready_transactions_count)--; 
+            (*ready_transactions_count)--; 
             
             _ready_transactions--;
 
@@ -192,7 +192,7 @@ void memory_pool::cuda::store_broudcast_block_part_data( p2p::Connection** __con
     p2p::Propagation_Protocol* _propagation_protocol = 
         ( p2p::Propagation_Protocol* ) malloc( sizeof( p2p::Propagation_Protocol ) );
 
-    p2p::Packet* _packet;
+    p2p::Packet* _packet = 0;
 
     char* _file_path = 
         ( char* ) malloc( sizeof( MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_STORE_DIRECTORY ) + 129 );

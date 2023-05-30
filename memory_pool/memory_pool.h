@@ -10,6 +10,8 @@ namespace memory_pool::cuda {
     // Cuda Extern functions
     extern "C++" {
 
+        void set_previous_data();
+
         void launch_kernel_transaction_verification();
 
         void launch_kernel_block_part_verification();

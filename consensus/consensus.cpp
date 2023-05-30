@@ -15,9 +15,10 @@
 #include <unistd.h>
 #include <string.h>
 
-namespace consensus {
+namespace consensus { // 
 
-    unsigned char current_block_hash[ CONSENSUS_CONSENSUS_CURRENT_BLOCK_HASH_LENGHT + 1 ] = { 0 };
+    unsigned char current_block_hash[ CONSENSUS_CONSENSUS_CURRENT_BLOCK_HASH_LENGHT + 1 ] = 
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 };
 
 }
 
@@ -103,7 +104,7 @@ void consensus::miner_selected( miner::Miner* __miner ) {
 
     // Save in file
     char* _file_path = 
-        ( char* ) malloc( sizeof( MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_STORE_DIRECTORY ) + 129 );
+        ( char* ) malloc( sizeof( MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_STORE_DIRECTORY ) + 128 );
 
     void* _hash_hex;
 
@@ -113,10 +114,10 @@ void consensus::miner_selected( miner::Miner* __miner ) {
         sizeof( MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_STORE_DIRECTORY ) - 1
     );
 
-    _file_path[ sizeof( MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_STORE_DIRECTORY ) + 128 ] = 0; 
+    _file_path[ sizeof( MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_STORE_DIRECTORY ) + 127 ] = 0; 
 
     _hash_hex = 
-        utils::convert_bytes_hex( _block_part_generated_data, 64 );
+        utils::convert_bytes_hex( _block_part_generated_data + 64, 64 );
 
     memcpy(
         _file_path + sizeof( MEMORY_POOL_KERNEL_BLOCK_PART_VERIFICATION_STORE_DIRECTORY ) - 1,
@@ -128,7 +129,9 @@ void consensus::miner_selected( miner::Miner* __miner ) {
         _block_part_generated_data,
         types::Block_Part::get_representation_length( _transactions_count ),
         _file_path
-    ); free( _file_path );
+    ); memory_pool::cuda::update_current_hash( _block_part_generated_data + 64 );
+    
+    free( _file_path );
 
     p2p::Propagation_Protocol* _propagation_protocol = 
         ( p2p::Propagation_Protocol* ) malloc( sizeof( p2p::Propagation_Protocol ) );
@@ -154,7 +157,9 @@ void consensus::miner_selected( miner::Miner* __miner ) {
 
 void consensus::consensus_main_process( miner::Miner* __miner ) {
 
-    sleep( 10 );
+    memory_pool::cuda::update_current_hash( current_block_hash );
+
+    sleep( 10 ); 
 
     std::cout << "starting " << std::endl;
 
@@ -164,7 +169,7 @@ void consensus::consensus_main_process( miner::Miner* __miner ) {
 
         else std::cout << "Not my turn" << std::endl;
 
-        // sleep( 5 );
+        sleep( 10 );
 
     }
 

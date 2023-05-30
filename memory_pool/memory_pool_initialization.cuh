@@ -48,9 +48,13 @@ namespace memory_pool::cuda {
     extern ::cuda::std::binary_semaphore* block_part_memory_pool_semaphores;
     extern ::cuda::std::binary_semaphore* block_part_memory_pool_broudcast_semaphores;
 
+    extern void* current_block_part_hash;
+
     extern "C++" {
 
         void initialize_memory_pool( uint64_t, void*, unsigned char, uint32_t );
+
+        void update_current_hash( void* );
 
     }
 

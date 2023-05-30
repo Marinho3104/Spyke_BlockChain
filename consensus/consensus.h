@@ -32,6 +32,8 @@ namespace memory_pool::cuda {
 
         void* get_transaction_data_from_memory_pool( uint32_t* );
 
+        void update_current_hash( void* );
+
     }
 
 }

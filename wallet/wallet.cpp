@@ -176,8 +176,8 @@ void wallet::Wallet::creates_and_signs_transaction() {
 
     memset( transaction_ready.to, 1, 32 );
 
-    transaction_ready.amount = 10;
-    transaction_ready.fee = 10;
+    transaction_ready.amount = 100;
+    transaction_ready.fee = 1;
     transaction_ready.nonce = current_node++;
 
     sign(
@@ -199,32 +199,32 @@ void wallet::Wallet::send_to_node( p2p::Packet* __packet ) {
 
             if ( ! wallet_connections_information.communication_connections[ _ ].connect() ) continue;
 
-            while( 1 ) {
+            // while( 1 ) {
 
-                sleep( 1 );
+            //     sleep( 1 );
 
-                for ( int __ = 0; __ < 1024; __++ ) {
+            //     for ( int __ = 0; __ < 1024; __++ ) {
+    
+            p2p::Propagation_Protocol* _propagation_protocol = 
+                ( p2p::Propagation_Protocol* ) malloc( sizeof( p2p::Propagation_Protocol ) );
+
+            new ( _propagation_protocol ) p2p::Propagation_Protocol(
+                P2P_PROTOCOLS_PROPAGATION_PROTOCOL_DEFINITIONS_PROPAGATION_TYPE_TRANSACTION,
+                TRANSACTION_PROPAGATION_LENGTH,
+                &transaction_ready
+            );
+
+            __packet = _propagation_protocol->get_packet();
             
-                p2p::Propagation_Protocol* _propagation_protocol = 
-                    ( p2p::Propagation_Protocol* ) malloc( sizeof( p2p::Propagation_Protocol ) );
+            creates_and_signs_transaction();
 
-                new ( _propagation_protocol ) p2p::Propagation_Protocol(
-                    P2P_PROTOCOLS_PROPAGATION_PROTOCOL_DEFINITIONS_PROPAGATION_TYPE_TRANSACTION,
-                    TRANSACTION_PROPAGATION_LENGTH,
-                    &transaction_ready
-                );
+            wallet_connections_information.communication_connections[ _ ].send_packet( __packet );
 
-                __packet = _propagation_protocol->get_packet();
-                
-                creates_and_signs_transaction();
+            _propagation_protocol->~Propagation_Protocol(); free( _propagation_protocol ); __packet->~Packet();
 
-                wallet_connections_information.communication_connections[ _ ].send_packet( __packet );
+                // }
 
-                _propagation_protocol->~Propagation_Protocol(); free( _propagation_protocol ); __packet->~Packet();
-
-                }
-
-            }
+            // }
 
             wallet_connections_information.communication_connections[ _ ].disconnect();
 
